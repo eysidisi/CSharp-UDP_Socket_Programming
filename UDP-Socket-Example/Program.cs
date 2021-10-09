@@ -36,11 +36,7 @@ namespace UDP_Socket_Example
         private static void Server()
         {
             // Create server socket
-            Socket serverSocket = new Socket(SocketType.Dgram, ProtocolType.Udp);
-            IPAddress serverIpAddress = IPAddress.Parse("127.0.0.1");
-            int serverPortNum = 50000;
-            IPEndPoint serverEndPoint = new IPEndPoint(serverIpAddress, serverPortNum);
-            serverSocket.Bind(serverEndPoint);
+            Socket serverSocket = CreateSocket("127.0.0.1",50000);
 
             // Listen for incoming message
             byte[] receivedBytes = new byte[BufferSize];
@@ -58,14 +54,19 @@ namespace UDP_Socket_Example
             serverSocket.Close();
         }
 
+        private static Socket CreateSocket(string ipAddress,int portNum)
+        {
+            Socket socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
+            IPAddress parsedIpAddress = IPAddress.Parse(ipAddress);
+            IPEndPoint localEndPoint = new IPEndPoint(parsedIpAddress, portNum);
+            socket.Bind(localEndPoint);
+            return socket;
+        }
+
         private static void Client()
         {
             // Create client socket
-            Socket clientSocket = new Socket(SocketType.Dgram, ProtocolType.Udp);
-            IPAddress clientIpAddress = IPAddress.Parse("127.0.0.1");
-            int clientPortNum = 60000;
-            IPEndPoint clientEndPoint = new IPEndPoint(clientIpAddress, clientPortNum);
-            clientSocket.Bind(clientEndPoint);
+            Socket clientSocket = CreateSocket("127.0.0.1", 60000);
 
             // Send a message to server
             IPAddress serverIPAddress = IPAddress.Parse("127.0.0.1");
