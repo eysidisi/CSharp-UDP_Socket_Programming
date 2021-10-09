@@ -36,7 +36,7 @@ namespace UDP_Socket_Example
         private static void Server()
         {
             // Create server socket
-            Socket serverSocket = CreateSocket("127.0.0.1",50000);
+            Socket serverSocket = CreateSocket("127.0.0.1", 50000);
 
             // Listen for incoming message
             byte[] receivedBytes = new byte[BufferSize];
@@ -53,10 +53,15 @@ namespace UDP_Socket_Example
             // Close socket
             serverSocket.Close();
         }
+        public const int SIO_UDP_CONNRESET = -1744830452;
 
-        private static Socket CreateSocket(string ipAddress,int portNum)
+        private static Socket CreateSocket(string ipAddress, int portNum)
         {
             Socket socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
+            socket.IOControl(
+            (IOControlCode)SIO_UDP_CONNRESET,
+    new byte[] { 0, 0, 0, 0 },
+    null);
             IPAddress parsedIpAddress = IPAddress.Parse(ipAddress);
             IPEndPoint localEndPoint = new IPEndPoint(parsedIpAddress, portNum);
             socket.Bind(localEndPoint);
@@ -75,6 +80,8 @@ namespace UDP_Socket_Example
             string messageToSend = "Hello World";
             byte[] bytesToSend = Encoding.ASCII.GetBytes(messageToSend);
             clientSocket.SendTo(bytesToSend, serverEndPoint);
+
+
 
             // Listen for incoming message
             byte[] receivedBytes = new byte[BufferSize];
