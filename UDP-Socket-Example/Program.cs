@@ -11,9 +11,26 @@ namespace UDP_Socket_Example
 
         static void Main(string[] args)
         {
-            Client();
+            Console.WriteLine("Enter 'S' for server 'C' for client");
 
-            //Server();
+            string input = Console.ReadLine();
+
+            if (input.Equals("S"))
+            {
+                Console.WriteLine("Starting server");
+                Server();
+            }
+            else if (input.Equals("C"))
+            {
+                Console.WriteLine("Starting client");
+                Client();
+            }
+            else
+            {
+                Console.WriteLine("Unexpected input!");
+            }
+
+            Console.ReadLine();
         }
 
         private static void Server()
@@ -52,7 +69,7 @@ namespace UDP_Socket_Example
 
             // Send a message to server
             IPAddress serverIPAddress = IPAddress.Parse("127.0.0.1");
-            int serverPortNum = 50799;
+            int serverPortNum = 50000;
             IPEndPoint serverEndPoint = new IPEndPoint(serverIPAddress, serverPortNum);
             string messageToSend = "Hello World";
             byte[] bytesToSend = Encoding.ASCII.GetBytes(messageToSend);
