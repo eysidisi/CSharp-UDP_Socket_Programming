@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using UDP_Socket_Example.Core;
 
 namespace UDP_Socket_Example
 {
@@ -11,60 +12,35 @@ namespace UDP_Socket_Example
 
         static void Main(string[] args)
         {
-            Client();
+            Console.WriteLine("Enter 'S' for server 'C' for client");
 
-            //Server();
-        }
+            string input = Console.ReadLine();
 
-        private static void Server()
-        {
-            // Create server socket
-            Socket serverSocket = new Socket(SocketType.Dgram, ProtocolType.Udp);
-            IPAddress serverIpAddress = IPAddress.Parse("127.0.0.1");
-            int serverPortNum = 50000;
-            IPEndPoint serverEndPoint = new IPEndPoint(serverIpAddress, serverPortNum);
-            serverSocket.Bind(serverEndPoint);
+            if (input.Equals("S"))
+            {
+                Console.WriteLine("Starting server");
 
-            // Listen for incoming message
-            byte[] receivedBytes = new byte[BufferSize];
-            EndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            serverSocket.ReceiveFrom(receivedBytes, ref clientEndPoint);
+                UDPSocket server = new UDPSocket("127.0.0.1", 50000);
+                string receivedMessage = server.Echo();
 
-            // Log received message to the user
-            string receivedMessage = Encoding.ASCII.GetString(receivedBytes);
-            Console.WriteLine(receivedMessage);
+                Console.WriteLine($"Server received {receivedMessage}");
+            }
+            else if (input.Equals("C"))
+            {
+                Console.WriteLine("Starting client");
 
-            // Echo received message
-            serverSocket.SendTo(receivedBytes, clientEndPoint);
+                UDPSocket client = new UDPSocket("127.0.0.1", 60000);
+                client.Send("Hello World", "127.0.0.1", 50000);
+                string receivedMessage = client.Listen();
 
-            // Close socket
-            serverSocket.Close();
-        }
-
-        private static void Client()
-        {
-            // Create client socket
-            Socket clientSocket = new Socket(SocketType.Dgram, ProtocolType.Udp);
-            IPAddress clientIpAddress = IPAddress.Parse("127.0.0.1");
-            int clientPortNum = 60000;
-            IPEndPoint clientEndPoint = new IPEndPoint(clientIpAddress, clientPortNum);
-            clientSocket.Bind(clientEndPoint);
-
-            // Send a message to server
-            IPAddress serverIPAddress = IPAddress.Parse("127.0.0.1");
-            int serverPortNum = 50799;
-            IPEndPoint serverEndPoint = new IPEndPoint(serverIPAddress, serverPortNum);
-            string messageToSend = "Hello World";
-            byte[] bytesToSend = Encoding.ASCII.GetBytes(messageToSend);
-            clientSocket.SendTo(bytesToSend, serverEndPoint);
-
-            // Listen for incoming message
-            byte[] receivedBytes = new byte[BufferSize];
-            clientSocket.Receive(receivedBytes);
-
-            // Log received message to user
-            string receivedMessage = Encoding.ASCII.GetString(receivedBytes);
-            Console.WriteLine(receivedMessage);
+                Console.WriteLine($"Client received {receivedMessage}");
+            }
+            else
+            {
+                Console.WriteLine("Unexpected input!");
+            }
+            Console.WriteLine("Press any key to quit!");
+            Console.ReadLine();
         }
     }
 }

@@ -6,4 +6,8 @@
     <RootNamespace>UDP_Socket_Example</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\UDP-Socket-Example.Core\UDP-Socket-Example.Core.csproj" />
+  </ItemGroup>
+
 </Project>
